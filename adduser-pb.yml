@@ -1,0 +1,71 @@
+---
+
+- name: adding user ansible to group sudo/wheel
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Check linux os family
+      debug: var=ansible_os_family
+
+    - block: #=====CentOS========
+       - name: Ensuring that wheel is able to use sudo without password CentOS
+         lineinfile:
+          path: /etc/sudoers
+          regexp: '^%wheel'
+          line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+          validate: 'visudo -cf %s'
+
+       - name: Setup Ansible User CentOS
+         user:
+          name: ansible
+          comment: Ansible Management User
+          group: wheel
+
+       - name: Add user "ansible" to sudo CentOS
+         lineinfile:
+          path: /etc/sudoers.d/ansible
+          line: 'ansible ALL=(ALL) NOPASSWD: ALL'
+          state: present
+          mode: 0440
+          create: yes
+          validate: 'visudo -cf %s'
+
+       - name: Deploy SSH Key CentOS
+         authorized_key:
+          user: ansible
+          key: "{{ lookup('file', '/Users/romanturchyn/.ssh/id_rsa.pub') }}"
+          state: present
+
+      when: ansible_os_family == "RedHat"
+
+    - block: #=====Debian========
+        - name: Ensuring that wheel is able to use sudo without password DEBIAN
+          lineinfile:
+            path: /etc/sudoers
+            regexp: '^%sudo'
+            line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+            validate: 'visudo -cf %s'
+
+        - name: Setup Ansible User DEBIAN
+          user:
+            name: ansible
+            comment: Ansible Management User
+            group: sudo
+
+        - name: Add user "ansible" to sudo DEBIAN
+          lineinfile:
+            path: /etc/sudoers.d/ansible
+            line: 'ansible ALL=(ALL) NOPASSWD: ALL'
+            state: present
+            mode: 0440
+            create: yes
+            validate: 'visudo -cf %s'
+
+        - name: Deploy SSH Key Debian
+          authorized_key:
+           user: ansible
+           key: "{{ lookup('file', '/Users/romanturchyn/.ssh/id_rsa.pub') }}"
+           state: present
+
+      when: ansible_os_family == "Debian"

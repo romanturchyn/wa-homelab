@@ -1,0 +1,8 @@
+---
+- src: https://github.com/geerlingguy/ansible-role-gitlab.git
+  version: "2.5.3"
+  name: gitlab_server
+
+- src: https://github.com/tenhishadow/manage_bind.git
+  version: "v1.0.0"
+  name: bind

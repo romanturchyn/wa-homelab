@@ -1,0 +1,12 @@
+---
+- name: Gitlab installation with ansible galaxy
+  hosts: gitlab
+  become: True
+
+  roles:
+    - role: gitlab_server
+
+
+
+
+
