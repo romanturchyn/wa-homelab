@@ -1,8 +1,0 @@
-
----
-
-ansible_python_interpreter       : /usr/bin/python3
-ansible_user                     : ubuntu
-ansible_ssh_private_key_file     : /Users/romanturchyn/Документи/Development/Ansible/aws-pubkeys/aws-frakey1.pem
-enviroment                       : STAGING
-owner                            : Roman
